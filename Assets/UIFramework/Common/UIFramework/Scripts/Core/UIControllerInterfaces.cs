@@ -44,9 +44,7 @@ public interface IWindowController : UIControllerInterfaces
 {
      bool IsHideOnOpenForegroundWindow { get; }//打开前景窗口的时候是否隐藏当前窗口
 
-    public void ReShow(UIPropertiesInterface props = null);//顶层返回的时候重新显示
-
-  
+    public void Redisplay(UIPropertiesInterface props = null);//顶层返回的时候重新显示
 
 }
 

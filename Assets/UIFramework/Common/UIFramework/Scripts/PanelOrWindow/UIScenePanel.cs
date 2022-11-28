@@ -155,9 +155,6 @@ public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where 
         
     }
 
-
-
-
    
     public virtual void VirShow() { 
     

@@ -19,7 +19,7 @@ public class UIWindowBase : UIScenePanel<UIWindowProperties>, IWindowController
 
    
 
-    public void ReShow(UIPropertiesInterface props = null)
+    public void Redisplay(UIPropertiesInterface props = null)
     {
         isStopaAnim = true;
         if (!IsVisible)
@@ -53,7 +53,7 @@ public class UIWindowBase : UIScenePanel<UIWindowProperties>, IWindowController
             }
         }
 
-    public void ReShow(UIPropertiesInterface props = null)
+    public void Redisplay(UIPropertiesInterface props = null)
     {
         isStopaAnim = true;
         if (!IsVisible)

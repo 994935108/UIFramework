@@ -11,7 +11,7 @@ public class UIPanelLayerController : UILayerBase<IPanelController>
     /// </summary>
     /// <param name="controller"></param>
     /// <param name="screenTransform"></param>
-    internal override void SetPanelOrWindowParent(UIControllerInterfaces controller, Transform screenTransform)
+    internal override void SetScreenParent(UIControllerInterfaces controller, Transform screenTransform)
     {
 
         var ctl = controller as IPanelController;
@@ -39,24 +39,24 @@ public class UIPanelLayerController : UILayerBase<IPanelController>
         }
         else
         {
-            base.SetPanelOrWindowParent(controller, screenTransform);
+            base.SetScreenParent(controller, screenTransform);
         }
     }
   
 
-    internal override void ShowWindowOrPanel<TProps>(IPanelController screen, TProps properties)
+    internal override void ShowScreen<TProps>(IPanelController screen, TProps properties)
     {
         screen.Show(properties);
     }
 
 
 
-    internal override void HideWindowOrPanel(IPanelController screen)
+    internal override void HideScreen(IPanelController screen)
     {
         screen.Hide();
     }
 
-    internal override void ShowWindowOrPanel(IPanelController screen)
+    internal override void ShowScreen(IPanelController screen)
     {
         screen.Show();
     }

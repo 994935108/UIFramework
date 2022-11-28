@@ -183,7 +183,7 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
 
     public void HideCurrentWindow() {
         if (windowLayer.CurrentWindow!=null) {
-            windowLayer.HideWindowOrPanel(windowLayer.CurrentWindow);
+            windowLayer.HideScreen(windowLayer.CurrentWindow);
         }
     }
 
@@ -257,7 +257,7 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
             windowLayer.RegisterWindowOrPanel(screenId, window);
             if (screenTransform != null)
             {
-                windowLayer.SetPanelOrWindowParent(controller, screenTransform);
+                windowLayer.SetScreenParent(controller, screenTransform);
                
             }
 
@@ -270,7 +270,7 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
             panelLayer.RegisterWindowOrPanel(screenId, panel);
             if (screenTransform != null)
             {
-                panelLayer.SetPanelOrWindowParent(controller, screenTransform);
+                panelLayer.SetScreenParent(controller, screenTransform);
             }
         }
     }
@@ -282,7 +282,7 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
             windowLayer.UnregisterWindowOrPanel(screenId, window);
             if (screenTransform != null)
             {
-                windowLayer.SetPanelOrWindowParent(controller, screenTransform);
+                windowLayer.SetScreenParent(controller, screenTransform);
             }
            
 
@@ -295,7 +295,7 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
             panelLayer.UnregisterWindowOrPanel(screenId, panel);
             if (screenTransform != null)
             {
-                panelLayer.SetPanelOrWindowParent(controller, screenTransform);
+                panelLayer.SetScreenParent(controller, screenTransform);
             }
         }
     }

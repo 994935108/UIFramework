@@ -16,21 +16,21 @@ public abstract class UILayerBase<TScreen> : MonoBehaviour where TScreen : UICon
     /// 显示一个屏幕画面
     /// </summary>
     /// <param name="screen"></param>
-    internal abstract void ShowWindowOrPanel(TScreen screen);
+    internal abstract void ShowScreen(TScreen screen);
     /// <summary>
     /// 显示一个可带参数的面板
     /// </summary>
     /// <typeparam name="TProps"></typeparam>
     /// <param name="screen"></param>
     /// <param name="properties"></param>
-    internal abstract void ShowWindowOrPanel<TProps>(TScreen screen, TProps properties) where TProps : UIPropertiesInterface;
+    internal abstract void ShowScreen<TProps>(TScreen screen, TProps properties) where TProps : UIPropertiesInterface;
 
     /// <summary>
     /// 隐藏一个面板
     /// </summary>
     /// <param name="screen"></param>
 
-    internal abstract void HideWindowOrPanel(TScreen screen);
+    internal abstract void HideScreen(TScreen screen);
     #endregion
 
 
@@ -42,7 +42,7 @@ public abstract class UILayerBase<TScreen> : MonoBehaviour where TScreen : UICon
         TScreen ctl;
         if (registeredScreens.TryGetValue(screenId, out ctl))
         {
-            ShowWindowOrPanel(ctl);
+            ShowScreen(ctl);
         }
         else
         {
@@ -59,7 +59,7 @@ public abstract class UILayerBase<TScreen> : MonoBehaviour where TScreen : UICon
         TScreen ctl;
         if (registeredScreens.TryGetValue(screenId, out ctl))
         {
-            ShowWindowOrPanel(ctl, properties);
+            ShowScreen(ctl, properties);
         }
         else
         {
@@ -73,7 +73,7 @@ public abstract class UILayerBase<TScreen> : MonoBehaviour where TScreen : UICon
         if (registeredScreens.TryGetValue(screenId, out ctl))
         {
 
-            HideWindowOrPanel(ctl);
+            HideScreen(ctl);
 
         }
         else
@@ -137,7 +137,7 @@ public abstract class UILayerBase<TScreen> : MonoBehaviour where TScreen : UICon
 
     #region  虚方法
 
-    internal virtual void SetPanelOrWindowParent(UIControllerInterfaces controller, Transform screenTransform)
+    internal virtual void SetScreenParent(UIControllerInterfaces controller, Transform screenTransform)
     {
 
 

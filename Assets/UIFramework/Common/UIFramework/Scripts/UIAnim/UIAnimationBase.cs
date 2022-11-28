@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIAnimationBase : MonoBehaviour, UIAnimation
+public class UIAnimationBase : MonoBehaviour, UIAnimationInterface
 {
     public void InTransition(Action finish)
     {

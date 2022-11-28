@@ -20,7 +20,7 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
 
 
 
-    internal override void ShowWindowOrPanel<TProps>(IWindowController screen, TProps properties)
+    internal override void ShowScreen<TProps>(IWindowController screen, TProps properties)
     {
         if (openWindowStack.Contains(screen))
         {
@@ -55,7 +55,7 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
         }
         CurrentWindow = screen;
     }
-    internal override void ShowWindowOrPanel(IWindowController screen)
+    internal override void ShowScreen(IWindowController screen)
     {
 
         if (openWindowStack.Contains(screen))
@@ -123,7 +123,7 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
     }
 
 
-    internal override void HideWindowOrPanel(IWindowController screen)
+    internal override void HideScreen(IWindowController screen)
     {
         MyDebugTool.Log("打开面板的数量" + openWindowStack.Count);
 
@@ -146,7 +146,7 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
                             {
                                 ///关闭当前窗口的时候判断前一个窗口的情况
                                 IWindowController preWindow = openWindowStack.Peek();
-                                preWindow.ReShow();
+                                preWindow.Redisplay();
                                 CurrentWindow = preWindow;
                             }
                             else
@@ -164,7 +164,7 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
                         {
                             ///关闭当前窗口的时候判断前一个窗口的情况
                             IWindowController preWindow = openWindowStack.Peek();
-                            preWindow.ReShow();
+                            preWindow.Redisplay();
                             CurrentWindow = preWindow;
                         }
                         else
@@ -206,7 +206,7 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
 
     }
 
-    internal override void SetPanelOrWindowParent(UIControllerInterfaces controller, Transform screenTransform)
+    internal override void SetScreenParent(UIControllerInterfaces controller, Transform screenTransform)
     {
         var ctl = controller as IWindowController;
         if (ctl != null)
