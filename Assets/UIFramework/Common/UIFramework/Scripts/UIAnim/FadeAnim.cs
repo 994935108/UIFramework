@@ -30,8 +30,12 @@ public class FadeAnim : UIAnimationBase
         }
 
         canvasGroup.alpha = 0;
-        InTween = canvasGroup.DOFade(1,0.5f).OnComplete(()=> {
+
+        
+        InTween = canvasGroup.DOFade(1,0.5f).SetEase(Ease.Linear).OnComplete(()=> {
+           
             finish.Invoke();
+
         });
         
     }
@@ -48,15 +52,30 @@ public class FadeAnim : UIAnimationBase
         }
 
         canvasGroup.alpha = 1;
-        OutTween = canvasGroup.DOFade(0, 0.5f).OnComplete(() => {
+       
+        OutTween = canvasGroup.DOFade(0, 0.5f).SetEase(Ease.Linear).OnComplete(() => {
+           
             finish.Invoke();
         });
     }
 
-   
+    public override void VirRecover()
+    {
+        if (canvasGroup == null)
+        {
+            return;
+        }
+        if (OutTween != null)
+        {
+            OutTween.Kill();
+        }
 
-
-
-
+        if (InTween != null)
+        {
+            InTween.Kill();
+        }
+        canvasGroup.alpha = 1;
+       
+    }
 
 }

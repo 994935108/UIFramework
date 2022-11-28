@@ -113,7 +113,7 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
         }
         else
         {
-            MyDebugTool.LogError("啥也不是");
+            MyDebugTool.LogError("没有找到UI："+ screenId);
         }
     }
 
@@ -154,6 +154,9 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
         UIControllerInterfaces uIController = UI.GetComponent<UIControllerInterfaces>();
         uIController.Init();
         RegisterWindowOrPanelToLayer(screenId, UI.GetComponent<UIControllerInterfaces>(), UI.transform);
+
+        MyDebugTool.LogError("加载UI:" + screenId);
+
     }
     public T GetWindowOrPanel<T>()where T: UIControllerInterfaces
     {

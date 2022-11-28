@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where TProps : UIPropertiesInterface
 {
@@ -30,18 +31,49 @@ public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where 
             return isVisible;
         }  }
 
-   
+    public bool HasInAnim
+    {
+        get
+        {
+            return inAnim!=null;
+        }
+    }
+
+    public bool HasOutAnim
+    {
+        get
+        {
+            return outAnim!=null;
+        }
+    }
+
+    Action InTransitionFinishCallback;
+    Action OutTransitionFinishCallback;
 
     public UIAnimationBase inAnim;
     public UIAnimationBase outAnim;
 
 
-    private bool isVisible;
+    private  bool isVisible;
 
+   protected bool isStopaAnim;
+
+    protected void RecoverAnim() {
+
+        if (inAnim!=null) { 
+        
+        inAnim.Recover();
+        }
+
+        if (outAnim!=null) { 
+        outAnim.Recover();
+
+        }
+
+    }
 
     public void Init()
     {
-       
         VirInit();
     }
 
@@ -59,31 +91,42 @@ public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where 
 
     public void Hide(bool anim = true)
     {
-        if (outAnim != null)
+        if (outAnim != null&& !isStopaAnim&& anim)
         {
             outAnim.OutTransition(() =>
             {
-                VirOutTransitionFinishedEvent();
 
-                VirHide();
-                isVisible = false;
-                gameObject.SetActive(false);
+                if (!isStopaAnim) {
+
+                    OutTransitionFinishCallback.Invoke();
+                    VirOutTransitionFinishedEvent();
+
+                    VirHide();
+                    isVisible = false;
+                    gameObject.SetActive(false);
+
+                    Debug.LogError("Òþ²ØÃæ°å" + this.name);
+                }
             });
         }
         else {
+            
+
             VirHide();
 
             isVisible = false;
             gameObject.SetActive(false);
+            
         }
       
 
     }
-    public void Show(UIPropertiesInterface props = null)
+    public void Show(UIPropertiesInterface props = null, bool anim = true)
     {
-        isVisible = true;
+            isStopaAnim = false;
+           isVisible = true;
 
-        gameObject.SetActive(true);
+           gameObject.SetActive(true);
 
 
         if (props != null)
@@ -96,13 +139,20 @@ public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where 
         }
         
         VirShow();
+      
 
-        if (inAnim != null)
+        if (inAnim != null && anim)
         {
-            inAnim.InTransition(()=> {
+            
+
+            inAnim.InTransition(() =>
+            {
+
+                InTransitionFinishCallback.Invoke();
                 VirInTransitionFinishedEvent();
             });
         }
+        
     }
 
 
@@ -126,5 +176,15 @@ public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where 
 
     }
 
-   
+    public void InTransitionFinish(Action finish)
+    {
+        InTransitionFinishCallback = finish;
+    }
+
+    public void OutTransitionFinish(Action finish)
+    {
+        OutTransitionFinishCallback = finish;
+
+
+    }
 }

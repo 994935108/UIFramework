@@ -15,6 +15,11 @@ public class UIAnimationBase : MonoBehaviour, UIAnimation
         VirOutTransition(finish);
     }
 
+    public void Recover()
+    {
+        VirRecover();
+    }
+
     public virtual void VirInTransition(Action finish) { 
     
     }
@@ -23,4 +28,10 @@ public class UIAnimationBase : MonoBehaviour, UIAnimation
     {
 
     }
+
+    public virtual void VirRecover( )
+    {
+
+    }
+
 }

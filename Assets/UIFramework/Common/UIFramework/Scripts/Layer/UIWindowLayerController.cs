@@ -2,19 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public struct WindowHistoryEntry
-{
-    public readonly IWindowController Screen;
-    public readonly UIWindowPropertiesInterface Properties;
-
-    public WindowHistoryEntry(IWindowController screen, UIWindowPropertiesInterface properties)
-    {
-        Screen = screen;
-        Properties = properties;
-    }
-
-
-}
 
 public class UIWindowLayerController : UILayerBase<IWindowController>
 {
@@ -27,58 +14,42 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
     {
         base.Initialize();
 
-        openWindowStack =new Stack<IWindowController>();
-      
+        openWindowStack = new Stack<IWindowController>();
+
     }
 
-   
+
 
     internal override void ShowWindowOrPanel<TProps>(IWindowController screen, TProps properties)
     {
         if (openWindowStack.Contains(screen))
         {
-            while (openWindowStack.Count > 0)
+            HideAllTopWindow(screen);
+
+            if (!screen.IsVisible)
             {
-                IWindowController windowController = openWindowStack.Pop();
-
-                if (windowController == screen)
-                {
-
-                    if (openWindowStack.Count > 0)
-                    {
-                        IWindowController pre = openWindowStack.Peek();
-                        if (pre.IsHideOnOpenForegroundWindow && pre.IsVisible)
-                        {
-                            pre.Hide();
-                        }
-
-                    }
-                    if (!windowController.IsVisible)
-                    {
-                        windowController.Show(properties);
-
-                    }
-                    break;
-
-                }
-                else
-                {
-                    if (windowController.IsVisible)
-                    {
-                        windowController.Hide();
-
-                    }
-                }
-
+                screen.Show(properties);
             }
         }
         else
         {
+            if (CurrentWindow != null && CurrentWindow.IsHideOnOpenForegroundWindow)
+            {
+                MyDebugTool.LogError("current==" + CurrentWindow.ScreenId);
 
-            if (CurrentWindow != null && CurrentWindow.IsHideOnOpenForegroundWindow) {
                 CurrentWindow.Hide();
+                if (CurrentWindow.HasOutAnim)
+                {
+                    CurrentWindow.OutTransitionFinish(() => {
+                        CurrentWindow.Show();
+                    });
+                }
+
             }
-            screen.Show(properties);
+            else
+            {
+                screen.Show(properties);
+            }
             openWindowStack.Push(screen);
 
         }
@@ -86,105 +57,149 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
     }
     internal override void ShowWindowOrPanel(IWindowController screen)
     {
+
         if (openWindowStack.Contains(screen))
         {
-            while (openWindowStack.Count > 0)
+            HideAllTopWindow(screen);
+
+            if (!screen.IsVisible)
             {
-                IWindowController windowController = openWindowStack.Pop();
-
-                if (windowController == screen)
-                {
-
-                    if (openWindowStack.Count > 0)
-                    {
-                        IWindowController pre = openWindowStack.Peek();
-                        if (pre.IsHideOnOpenForegroundWindow && pre.IsVisible)
-                        {
-                            pre.Hide();
-                        }
-
-                    }
-                    if (!windowController.IsVisible)
-                    {
-                        windowController.Show();
-
-                    }
-                    break;
-
-                }
-                else
-                {
-                    if (windowController.IsVisible)
-                    {
-                        windowController.Hide();
-
-                    }
-                }
-
+                screen.Show();
             }
         }
-        else {
-            if (CurrentWindow!=null&&CurrentWindow.IsHideOnOpenForegroundWindow)
+        else
+        {
+            if (CurrentWindow != null && CurrentWindow.IsHideOnOpenForegroundWindow)
             {
+                MyDebugTool.LogError("current==" + CurrentWindow.ScreenId);
+
                 CurrentWindow.Hide();
+
+                if (CurrentWindow.HasOutAnim) {
+                    CurrentWindow.OutTransitionFinish(() => {
+                        CurrentWindow.Show();
+                    });
+                }
+                
+
             }
-            screen.Show();
+            else
+            {
+                screen.Show();
+            }
             openWindowStack.Push(screen);
 
         }
         CurrentWindow = screen;
     }
 
+    
 
-    internal override void HideWindowOrPanel(IWindowController screen)
+   
+
+    private void HideAllTopWindow(IWindowController screen)
     {
-        MyDebugTool.Log("打开面板的数量"+openWindowStack.Count);
-        if (openWindowStack.Count > 0)
+        while (openWindowStack.Count > 0)
         {
-            if (openWindowStack.Peek() == screen&&screen.IsVisible)
-            {
-                openWindowStack.Pop().Hide();
-                if (openWindowStack.Count > 0)
-                {
-                    IWindowController preWindow = openWindowStack.Peek();
-                    if (preWindow.IsHideOnOpenForegroundWindow && !preWindow.IsVisible)
-                    {
-                        preWindow.Show();
-                        openWindowStack.Pop();
-                    }
-                    else
-                    {
-                        MyDebugTool.LogError("当前面板是打开的无需再次打开");
-                    }
-                }
-                else {
-                    MyDebugTool.LogError("列表已经空了");
-                }
+            IWindowController windowController = openWindowStack.Peek();
+          
 
-               
+
+            if (windowController != screen)
+            {
+                if (windowController.IsVisible)
+                {
+                    //Debug.LogError("");
+                    windowController.Hide(false);
+                }
+                openWindowStack.Pop();
             }
             else {
-                MyDebugTool.LogError("当前面板不是顶层面板,不允许关闭");
+                break;
             }
+
         }
-        else {
-            MyDebugTool.LogError("没有这个面板");
-        }
+
     }
 
 
+    internal override void HideWindowOrPanel(IWindowController screen)
+    {
+        MyDebugTool.Log("打开面板的数量" + openWindowStack.Count);
+
+        if (openWindowStack.Contains(screen))
+        {
+            if (openWindowStack.Count > 0)
+            {
+                //判断当前打开的是否是顶层Window
+                if (openWindowStack.Peek() == screen)
+                {
+                    IWindowController windowController = openWindowStack.Pop();
+                    windowController.Hide();
+
+                    if (windowController.HasOutAnim)
+                    {
+
+                        windowController.OutTransitionFinish(() =>
+                        {
+                            if (openWindowStack.Count > 0)
+                            {
+                                ///关闭当前窗口的时候判断前一个窗口的情况
+                                IWindowController preWindow = openWindowStack.Peek();
+                                preWindow.ReShow();
+                                CurrentWindow = preWindow;
+                            }
+                            else
+                            {
+                                MyDebugTool.LogError("列表已经空了");
+                            }
+
+                        });
+                      
+
+                    }
+                    else {
+
+                        if (openWindowStack.Count > 0)
+                        {
+                            ///关闭当前窗口的时候判断前一个窗口的情况
+                            IWindowController preWindow = openWindowStack.Peek();
+                            preWindow.ReShow();
+                            CurrentWindow = preWindow;
+                        }
+                        else
+                        {
+                            MyDebugTool.LogError("列表已经空了");
+                        }
+                    }
+
+                }
+                else
+                {
+                    MyDebugTool.LogError("当前面板不是顶层面板,不允许关闭");
+                }
+            }
+
+        }
+        else
+        {
+            MyDebugTool.LogError("没有这个面板");
+        }
+
+    }
 
 
     internal override void HideAll(bool shouldAnimateWhenHiding = true)
     {
-        while (openWindowStack.Count>0)
+        while (openWindowStack.Count > 0)
         {
             if (openWindowStack.Peek().IsVisible)
             {
                 openWindowStack.Pop().Hide();
 
             }
-            else {
+            else
+            {
                 openWindowStack.Pop();
             }
         }
@@ -217,11 +232,5 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
             screenTransform.SetParent(parent, false);
 
         }
-
-
     }
-
-
-
-
 }

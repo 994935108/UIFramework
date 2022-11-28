@@ -20,7 +20,7 @@ public class ToastPanel : UIPanelBase<ToastPanelProperties>
     {
         base.SetProperties(props);
         pro = props;
-
+        toastText.text = pro.content;
         StartCoroutine(AutoHide());
 
     }

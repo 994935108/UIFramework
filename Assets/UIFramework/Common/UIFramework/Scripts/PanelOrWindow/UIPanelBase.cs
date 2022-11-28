@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class UIPanelBase : UIScenePanel<UIPanelProperties>
+public class UIPanelBase : UIScenePanel<UIPanelProperties>, IPanelController
 {
     
 }

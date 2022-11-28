@@ -9,5 +9,9 @@ public interface UIAnimation
 
     public void OutTransition(Action finish);
 
+
+
+    public void Recover();
+
    
 }
