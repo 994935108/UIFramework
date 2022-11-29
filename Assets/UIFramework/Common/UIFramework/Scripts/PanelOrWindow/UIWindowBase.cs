@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIWindowBase : UIScenePanel<UIWindowProperties>, IWindowController
+public class UIWindowBase : UIWindowAndPanelBasePanel<UIWindowProperties>, IWindowBaseInterface
 {
     [Tooltip("打开前面窗口的时候是否隐藏")]
     public bool isHideOnOpenForegroundWindow = true;
@@ -21,25 +21,21 @@ public class UIWindowBase : UIScenePanel<UIWindowProperties>, IWindowController
 
     public void Redisplay(UIPropertiesInterface props = null)
     {
-        isStopaAnim = true;
         if (!IsVisible)
         {
             Show();
         }
-
-        RecoverAnim();
-        ReShow();
+        Redisplay();
     }
 
-    public virtual void ReShow()
+    public virtual void Redisplay()
     {
         
     }
-
 }
 
 
-    public class UIWindowBase<Tprops> : UIScenePanel<Tprops>, IWindowController where Tprops : UIPropertiesInterface
+    public class UIWindowBase<Tprops> : UIWindowAndPanelBasePanel<Tprops>, IWindowBaseInterface where Tprops : UIPropertiesInterface
     {
         [Tooltip("打开前面窗口的时候是否隐藏")]
         public bool isHideOnOpenForegroundWindow = true;
@@ -55,14 +51,13 @@ public class UIWindowBase : UIScenePanel<UIWindowProperties>, IWindowController
 
     public void Redisplay(UIPropertiesInterface props = null)
     {
-        isStopaAnim = true;
+       
         if (!IsVisible)
         {
             Show();
             
         }
-        RecoverAnim();
-
+        
         ReShow();
     }
 

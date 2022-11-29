@@ -3,7 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-
+public enum UIType
+{
+    DefaultType,//默认形式
+    FixedDistanceType,//固定距离显示
+    FollowType,//跟随类型
+    InSpaceType,//放置于空间中
+}
 public enum UILayer
 {
 
@@ -16,7 +22,7 @@ public enum UILayer
 
 }
 
-public interface UIControllerInterfaces
+public interface UIWindowAndPanelBaseInterfaces
 {
     string ScreenId { get; set; }
      bool IsVisible { get; }
@@ -33,14 +39,16 @@ public interface UIControllerInterfaces
     public void Show(UIPropertiesInterface props = null, bool anim = true);//显示
     public void Hide(bool anim = true);
 
-    public void InTransitionFinish(Action finish);
+    //隐藏面板或窗口时候的过渡动画
+    public void HideTransitionAnimFinish(Action finish);
 
-    public void OutTransitionFinish(Action finish);
+    //显示面板或窗口时候的过度动画
+    public void ShowTransitionAnimFinish(Action finish);
 
 }
 
 
-public interface IWindowController : UIControllerInterfaces
+public interface IWindowBaseInterface : UIWindowAndPanelBaseInterfaces
 {
      bool IsHideOnOpenForegroundWindow { get; }//打开前景窗口的时候是否隐藏当前窗口
 
@@ -51,10 +59,9 @@ public interface IWindowController : UIControllerInterfaces
 
 
 
-public interface IPanelController : UIControllerInterfaces
+public interface IPanelBaseInterface : UIWindowAndPanelBaseInterfaces
 {
-    // public PanelShowType PanelShowType { get; }//显示面板的类型
-
+   
 
 }
 

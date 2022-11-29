@@ -7,7 +7,7 @@ public class Program : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        UIFrame.Instance.ShowWindowOrPanelByType<StartGameWindow>();
+        UIManager.Instance.ShowWindowOrPanelByType<StartGameWindow>();
         
     }
 

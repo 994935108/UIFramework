@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIPanelLayerController : UILayerBase<IPanelController>
+public class UIPanelLayer : UILayerBase<IPanelBaseInterface>
 {
 
     /// <summary>
@@ -11,10 +11,10 @@ public class UIPanelLayerController : UILayerBase<IPanelController>
     /// </summary>
     /// <param name="controller"></param>
     /// <param name="screenTransform"></param>
-    internal override void SetScreenParent(UIControllerInterfaces controller, Transform screenTransform)
+    internal override void SetScreenParent(UIWindowAndPanelBaseInterfaces controller, Transform screenTransform)
     {
 
-        var ctl = controller as IPanelController;
+        var ctl = controller as IPanelBaseInterface;
         if (ctl != null)
         {
 
@@ -44,19 +44,19 @@ public class UIPanelLayerController : UILayerBase<IPanelController>
     }
   
 
-    internal override void ShowScreen<TProps>(IPanelController screen, TProps properties)
+    internal override void ShowWidowOrPanel<TProps>(IPanelBaseInterface screen, TProps properties)
     {
         screen.Show(properties);
     }
 
 
 
-    internal override void HideScreen(IPanelController screen)
+    internal override void HideWindowOrPanel(IPanelBaseInterface screen)
     {
         screen.Hide();
     }
 
-    internal override void ShowScreen(IPanelController screen)
+    internal override void ShowWindowOrPanel(IPanelBaseInterface screen)
     {
         screen.Show();
     }

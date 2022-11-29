@@ -29,7 +29,7 @@ public class ToastPanel : UIPanelBase<ToastPanelProperties>
 
     public IEnumerator AutoHide() {
         yield return new WaitForSeconds(pro.autoHideTime);
-        UIFrame.Instance.HidePanelById<ToastPanel>();
+        UIManager.Instance.HidePanelById<ToastPanel>();
     
     }
 }

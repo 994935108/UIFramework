@@ -3,24 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIWindowLayerController : UILayerBase<IWindowController>
+public class UIWindowLayer : UILayerBase<IWindowBaseInterface>
 {
-    private Stack<IWindowController> openWindowStack;
+    private Stack<IWindowBaseInterface> openWindowStack;
 
-    public IWindowController CurrentWindow { get; internal set; }
+    public IWindowBaseInterface CurrentWindow { get; internal set; }
 
 
     internal override void Initialize()
     {
         base.Initialize();
 
-        openWindowStack = new Stack<IWindowController>();
+        openWindowStack = new Stack<IWindowBaseInterface>();
 
     }
 
 
 
-    internal override void ShowScreen<TProps>(IWindowController screen, TProps properties)
+    internal override void ShowWidowOrPanel<TProps>(IWindowBaseInterface screen, TProps properties)
     {
         if (openWindowStack.Contains(screen))
         {
@@ -40,7 +40,7 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
                 CurrentWindow.Hide();
                 if (CurrentWindow.HasOutAnim)
                 {
-                    CurrentWindow.OutTransitionFinish(() => {
+                    CurrentWindow.ShowTransitionAnimFinish(() => {
                         CurrentWindow.Show();
                     });
                 }
@@ -55,7 +55,7 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
         }
         CurrentWindow = screen;
     }
-    internal override void ShowScreen(IWindowController screen)
+    internal override void ShowWindowOrPanel(IWindowBaseInterface screen)
     {
 
         if (openWindowStack.Contains(screen))
@@ -76,7 +76,7 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
                 CurrentWindow.Hide();
 
                 if (CurrentWindow.HasOutAnim) {
-                    CurrentWindow.OutTransitionFinish(() => {
+                    CurrentWindow.ShowTransitionAnimFinish(() => {
                         CurrentWindow.Show();
                     });
                 }
@@ -97,11 +97,11 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
 
    
 
-    private void HideAllTopWindow(IWindowController screen)
+    private void HideAllTopWindow(IWindowBaseInterface screen)
     {
         while (openWindowStack.Count > 0)
         {
-            IWindowController windowController = openWindowStack.Peek();
+            IWindowBaseInterface windowController = openWindowStack.Peek();
           
 
 
@@ -123,7 +123,7 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
     }
 
 
-    internal override void HideScreen(IWindowController screen)
+    internal override void HideWindowOrPanel(IWindowBaseInterface screen)
     {
         MyDebugTool.Log("打开面板的数量" + openWindowStack.Count);
 
@@ -134,18 +134,18 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
                 //判断当前打开的是否是顶层Window
                 if (openWindowStack.Peek() == screen)
                 {
-                    IWindowController windowController = openWindowStack.Pop();
+                    IWindowBaseInterface windowController = openWindowStack.Pop();
                     windowController.Hide();
 
                     if (windowController.HasOutAnim)
                     {
 
-                        windowController.OutTransitionFinish(() =>
+                        windowController.ShowTransitionAnimFinish(() =>
                         {
                             if (openWindowStack.Count > 0)
                             {
                                 ///关闭当前窗口的时候判断前一个窗口的情况
-                                IWindowController preWindow = openWindowStack.Peek();
+                                IWindowBaseInterface preWindow = openWindowStack.Peek();
                                 preWindow.Redisplay();
                                 CurrentWindow = preWindow;
                             }
@@ -163,7 +163,7 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
                         if (openWindowStack.Count > 0)
                         {
                             ///关闭当前窗口的时候判断前一个窗口的情况
-                            IWindowController preWindow = openWindowStack.Peek();
+                            IWindowBaseInterface preWindow = openWindowStack.Peek();
                             preWindow.Redisplay();
                             CurrentWindow = preWindow;
                         }
@@ -206,9 +206,9 @@ public class UIWindowLayerController : UILayerBase<IWindowController>
 
     }
 
-    internal override void SetScreenParent(UIControllerInterfaces controller, Transform screenTransform)
+    internal override void SetScreenParent(UIWindowAndPanelBaseInterfaces controller, Transform screenTransform)
     {
-        var ctl = controller as IWindowController;
+        var ctl = controller as IWindowBaseInterface;
         if (ctl != null)
         {
 

@@ -18,11 +18,15 @@ public class UIEventHandle : MonoBehaviour
         UIEventCenter.Get<ForegroundWindowEvent>().AddListener(ForegroundWindowEvent);
 
 
+        UIEventCenter.Get<LeftPanelEvent>().AddListener(LeftPanelEvent);
+
+
+
 
     }
 
     public void StartGameWindowEvet() {
-        UIFrame.Instance.ShowWindowOrPanelByType<MainWindow>();
+        UIManager.Instance.ShowWindowOrPanelByType<MainWindow>();
     }
 
 
@@ -33,11 +37,11 @@ public class UIEventHandle : MonoBehaviour
 
             case "Back":
 
-                UIFrame.Instance.HideCurrentWindow();
+                UIManager.Instance.HideCurrentWindow();
                 break;
 
             case "Toast":
-                UIFrame.Instance.ShowWindowOrPanelByType<ToastPanel, ToastPanelProperties>(new ToastPanelProperties {
+                UIManager.Instance.ShowWindowOrPanelByType<ToastPanel, ToastPanelProperties>(new ToastPanelProperties {
                     autoHideTime = 0.5f,
                     content = "显示一个Toast提示框"
                 });
@@ -45,10 +49,14 @@ public class UIEventHandle : MonoBehaviour
 
                 
             case "Popup":
-                UIFrame.Instance.ShowWindowOrPanelByType<PopupPanel>();
+                UIManager.Instance.ShowWindowOrPanelByType<PopupPanel>();
                 break;
             case "ForegroundWindow":
-                UIFrame.Instance.ShowWindowOrPanelByType<ForegroundWindow>();
+                UIManager.Instance.ShowWindowOrPanelByType<ForegroundWindow>();
+                break;
+
+            case "LeftPanel":
+                UIManager.Instance.ShowWindowOrPanelByType<LeftPanel>();
                 break;
             default:
                 break;
@@ -64,7 +72,7 @@ public class UIEventHandle : MonoBehaviour
 
             case "Yes":
 
-                UIFrame.Instance.ShowWindowOrPanelByType<ToastPanel, ToastPanelProperties>(new ToastPanelProperties
+                UIManager.Instance.ShowWindowOrPanelByType<ToastPanel, ToastPanelProperties>(new ToastPanelProperties
                 {
                     autoHideTime = 0.5f,
                     content = "选择了Yes"
@@ -72,7 +80,7 @@ public class UIEventHandle : MonoBehaviour
                 break;
 
             case "No":
-                UIFrame.Instance.ShowWindowOrPanelByType<ToastPanel, ToastPanelProperties>(new ToastPanelProperties
+                UIManager.Instance.ShowWindowOrPanelByType<ToastPanel, ToastPanelProperties>(new ToastPanelProperties
                 {
                     autoHideTime = 0.5f,
                     content = "选择了No"
@@ -84,7 +92,7 @@ public class UIEventHandle : MonoBehaviour
                 break;
         }
 
-        UIFrame.Instance.HidePanelById<PopupPanel>();
+        UIManager.Instance.HidePanelById<PopupPanel>();
 
     }
 
@@ -94,11 +102,11 @@ public class UIEventHandle : MonoBehaviour
         {
 
             case "Back":
-                UIFrame.Instance.HideCurrentWindow();
+                UIManager.Instance.HideCurrentWindow();
                 break;
 
             case "StartGame":
-                UIFrame.Instance.ShowWindowOrPanelByType<StartGameWindow>();
+                UIManager.Instance.ShowWindowOrPanelByType<StartGameWindow>();
                 break;
 
 
@@ -106,5 +114,15 @@ public class UIEventHandle : MonoBehaviour
                 break;
         }
 
+    }
+
+    public void LeftPanelEvent(string msg) {
+
+        if (msg=="Fold") {
+
+            UIManager.Instance.HidePanelById<LeftPanel>();
+        
+        }
+    
     }
 }

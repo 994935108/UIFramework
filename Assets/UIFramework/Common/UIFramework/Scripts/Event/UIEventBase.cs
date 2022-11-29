@@ -5,56 +5,44 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public static class UIEventCenter {
-    private static readonly SignalHub hub = new SignalHub();
+   
+    private static Dictionary<Type, UIEventInterface> events = new Dictionary<Type, UIEventInterface>();
+
+
     public static T Get<T>() where T : UIEventInterface, new()
     {
-        return hub.Get<T>();
+        Type eventType = typeof(T);
+        UIEventInterface tmpEvent;
+
+        if (events.TryGetValue(eventType, out tmpEvent))
+        {
+            return (T)tmpEvent;
+        }
+
+        return (T)BindEvent(eventType);
+    }
+
+
+    private static UIEventInterface BindEvent(Type eventType)
+    {
+        UIEventInterface tmpEvent;
+        if (events.TryGetValue(eventType, out tmpEvent))
+        {
+
+            return tmpEvent;
+        }
+
+        tmpEvent = (UIEventInterface)Activator.CreateInstance(eventType);
+        events.Add(eventType, tmpEvent);
+        return tmpEvent;
     }
 }
 
-public class SignalHub {
-    private Dictionary<Type, UIEventInterface> signals = new Dictionary<Type, UIEventInterface>();
 
-   
-    public T Get<T>() where T : UIEventInterface, new()
-    {
-        Type signalType = typeof(T);
-        UIEventInterface signal;
-
-        if (signals.TryGetValue(signalType, out signal))
-        {
-            return (T)signal;
-        }
-
-        return (T)Bind(signalType);
-    }
-
-   
-    private UIEventInterface Bind(Type signalType)
-    {
-        UIEventInterface signal;
-        if (signals.TryGetValue(signalType, out signal))
-        {
-            UnityEngine.Debug.LogError(string.Format("Signal already registered for type {0}",
-                signalType.ToString()));
-            return signal;
-        }
-
-        signal = (UIEventInterface)Activator.CreateInstance(signalType);
-        signals.Add(signalType, signal);
-        return signal;
-    }
-
-    private UIEventInterface Bind<T>() where T : UIEventInterface, new()
-    {
-        return Bind(typeof(T));
-    }
-
-   
+public interface UIEventInterface
+{
 
 }
-
-
 
 public class UIEvent:UIEventInterface { 
 

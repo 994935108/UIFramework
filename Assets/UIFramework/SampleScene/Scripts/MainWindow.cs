@@ -16,8 +16,11 @@ public class MainWindow : UIWindowBase
     public Button popup;
     public Button ForegroundWindow;
 
+    public Button LeftPanel;
 
-    
+
+
+
 
     protected override void VirInit()
     {
@@ -29,6 +32,8 @@ public class MainWindow : UIWindowBase
         popup = transform.Find("Popup").GetComponent<Button>();
 
         ForegroundWindow= transform.Find("ForegroundWindow").GetComponent<Button>();
+
+        LeftPanel = transform.Find("LeftPanel").GetComponent<Button>();
         back.onClick.AddListener(() =>
         {
 
@@ -54,6 +59,13 @@ public class MainWindow : UIWindowBase
         {
 
             UIEventCenter.Get<MainWindowEvent>().Dispatch(ForegroundWindow);
+
+        });
+
+        LeftPanel.onClick.AddListener(() =>
+        {
+            UIEventCenter.Get<MainWindowEvent>().Dispatch(LeftPanel);
+
 
         });
     }

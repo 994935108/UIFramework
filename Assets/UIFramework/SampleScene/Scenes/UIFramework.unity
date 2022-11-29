@@ -222,6 +222,18 @@ PrefabInstance:
       propertyPath: m_ReferenceResolution.y
       value: 1080
       objectReference: {fileID: 0}
+    - target: {fileID: 6920449395171249731, guid: 7a550c5cff29e4d43ae0076b0587581e, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 736232099}
+    - target: {fileID: 6920449395171249731, guid: 7a550c5cff29e4d43ae0076b0587581e, type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6920449395171249732, guid: 7a550c5cff29e4d43ae0076b0587581e, type: 3}
+      propertyPath: panelLayer
+      value: 
+      objectReference: {fileID: 1290977568}
     - target: {fileID: 6920449395171249735, guid: 7a550c5cff29e4d43ae0076b0587581e, type: 3}
       propertyPath: m_Name
       value: UIFrame
@@ -232,6 +244,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6920449395171249759, guid: 7a550c5cff29e4d43ae0076b0587581e, type: 3}
+    - {fileID: 6920449395171249758, guid: 7a550c5cff29e4d43ae0076b0587581e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7a550c5cff29e4d43ae0076b0587581e, type: 3}
 --- !u!224 &129129294 stripped
 RectTransform:
@@ -445,6 +458,23 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
+--- !u!1 &1290977567 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6920449395171249735, guid: 7a550c5cff29e4d43ae0076b0587581e, type: 3}
+  m_PrefabInstance: {fileID: 129129293}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1290977568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290977567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ebb21f6656ebf418c80498af18f987, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1900683901
 GameObject:
   m_ObjectHideFlags: 0

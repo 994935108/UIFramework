@@ -5,9 +5,10 @@ using UnityEngine;
 
 public interface UIAnimationInterface
 {
-    public void InTransition(Action finish);
+    public void ShowTransitionAnim(Action finish);
 
-    public void OutTransition(Action finish);
+
+    public void HideTransitionAnim(Action finish);
 
 
 

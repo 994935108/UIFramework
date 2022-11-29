@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIFrame : SingletonMonoBehaviour<UIFrame>
+public class UIManager : SingletonMonoBehaviour<UIManager>
 {
     //public static UIFrame Instance;
 
    
    
-    public UIPanelLayerController panelLayer;
-    public UIWindowLayerController windowLayer;
+    public UIPanelLayer panelLayer;
+    public UIWindowLayer windowLayer;
 
 
 
@@ -53,7 +53,7 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
     {
         if (panelLayer == null)
         {
-            panelLayer = gameObject.GetComponent<UIPanelLayerController>();
+            panelLayer = gameObject.GetComponent<UIPanelLayer>();
             if (panelLayer == null)
             {
                 MyDebugTool.LogError("[UI Frame] UI Frame lacks Panel Layer!");
@@ -69,7 +69,7 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
 
         if (windowLayer == null)
         {
-            windowLayer = gameObject.GetComponent<UIWindowLayerController>();
+            windowLayer = gameObject.GetComponent<UIWindowLayer>();
             if (panelLayer == null)
             {
                 MyDebugTool.LogError("[UI Frame] UI Frame lacks Window Layer!");
@@ -95,20 +95,20 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
     /// 显示面板
     /// </summary>
     /// <param name="screenId"></param>
-    public void ShowWindowOrPanelByType<T>()where T:UIControllerInterfaces {
+    public void ShowWindowOrPanelByType<T>()where T:UIWindowAndPanelBaseInterfaces {
         string screenId = typeof(T).ToString();
         if (!WindowOrPanelAlreadyRegistered(screenId))
         {
             CreatePanelOrWindowByID(screenId);
         }
 
-        if (typeof(IWindowController).IsAssignableFrom(typeof(T)))
+        if (typeof(IWindowBaseInterface).IsAssignableFrom(typeof(T)))
         {
-            windowLayer.ShowScreenById(screenId);
+            windowLayer.ShowWindowOrPanelById(screenId);
         }
-        else if (typeof(IPanelController).IsAssignableFrom(typeof(T)))
+        else if (typeof(IPanelBaseInterface).IsAssignableFrom(typeof(T)))
         {
-            panelLayer.ShowScreenById(screenId);
+            panelLayer.ShowWindowOrPanelById(screenId);
 
         }
         else
@@ -132,11 +132,11 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
             CreatePanelOrWindowByID(screenId);
         }
       
-        if (typeof(IWindowController).IsAssignableFrom(typeof(T)))
+        if (typeof(IWindowBaseInterface).IsAssignableFrom(typeof(T)))
         {
             windowLayer.ShowWindowOrPanelById<TProps>(screenId, properties);
         }
-        else if (typeof(IPanelController).IsAssignableFrom(typeof(T)))
+        else if (typeof(IPanelBaseInterface).IsAssignableFrom(typeof(T)))
         {
             panelLayer.ShowWindowOrPanelById<TProps>(screenId, properties);
 
@@ -151,22 +151,22 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
         GameObject UI = Instantiate(Resources.Load<GameObject>("UI/Panel/" + screenId));
         UI.gameObject.name = screenId;
         UI.SetActive(false);
-        UIControllerInterfaces uIController = UI.GetComponent<UIControllerInterfaces>();
+        UIWindowAndPanelBaseInterfaces uIController = UI.GetComponent<UIWindowAndPanelBaseInterfaces>();
         uIController.Init();
-        RegisterWindowOrPanelToLayer(screenId, UI.GetComponent<UIControllerInterfaces>(), UI.transform);
+        RegisterWindowOrPanelToLayer(screenId, UI.GetComponent<UIWindowAndPanelBaseInterfaces>(), UI.transform);
 
         MyDebugTool.LogError("加载UI:" + screenId);
 
     }
-    public T GetWindowOrPanel<T>()where T: UIControllerInterfaces
+    public T GetWindowOrPanel<T>()where T: UIWindowAndPanelBaseInterfaces
     {
         string screenId = typeof(T).ToString();
 
-        if (typeof(IWindowController).IsAssignableFrom(typeof(T)))
+        if (typeof(IWindowBaseInterface).IsAssignableFrom(typeof(T)))
         {
           return   (T)windowLayer.GetWindowOrPanelByScreenId(screenId);
         }
-        else if (typeof(IPanelController).IsAssignableFrom(typeof(T)))
+        else if (typeof(IPanelBaseInterface).IsAssignableFrom(typeof(T)))
         {
             return (T)panelLayer.GetWindowOrPanelByScreenId(screenId);
 
@@ -183,23 +183,23 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
 
     public void HideCurrentWindow() {
         if (windowLayer.CurrentWindow!=null) {
-            windowLayer.HideScreen(windowLayer.CurrentWindow);
+            windowLayer.HideWindowOrPanel(windowLayer.CurrentWindow);
         }
     }
 
    
-    public void HidePanelById<T>()where T:UIControllerInterfaces {
+    public void HidePanelById<T>()where T:UIWindowAndPanelBaseInterfaces {
         string screenId = typeof(T).ToString();
 
         if (WindowOrPanelAlreadyRegistered(screenId))
         {
-            if (typeof(IWindowController).IsAssignableFrom(typeof(T)))
+            if (typeof(IWindowBaseInterface).IsAssignableFrom(typeof(T)))
             {
                 // windowLayer.HideScreenById(screenId);
 
                 Debug.LogError("当前关闭的窗体为Window类型，不能直接关闭,如果当前窗体为顶层Window，可使用HideCurrentWindow()方法进行关闭");
             }
-            else if (typeof(IPanelController).IsAssignableFrom(typeof(T)))
+            else if (typeof(IPanelBaseInterface).IsAssignableFrom(typeof(T)))
             {
                  panelLayer.HideWindowOrPanelById(screenId);
 
@@ -249,9 +249,9 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
         return false;
     }
 
-    private void RegisterWindowOrPanelToLayer(string screenId, UIControllerInterfaces controller, Transform screenTransform)
+    private void RegisterWindowOrPanelToLayer(string screenId, UIWindowAndPanelBaseInterfaces controller, Transform screenTransform)
     {
-        IWindowController window = controller as IWindowController;
+        IWindowBaseInterface window = controller as IWindowBaseInterface;
         if (window != null)
         {
             windowLayer.RegisterWindowOrPanel(screenId, window);
@@ -264,7 +264,7 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
             return;
         }
 
-        IPanelController panel = controller as IPanelController;
+        IPanelBaseInterface panel = controller as IPanelBaseInterface;
         if (panel != null)
         {
             panelLayer.RegisterWindowOrPanel(screenId, panel);
@@ -274,9 +274,9 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
             }
         }
     }
-    private void UnregisterScreen(string screenId, UIControllerInterfaces controller, Transform screenTransform)
+    private void UnregisterScreen(string screenId, UIWindowAndPanelBaseInterfaces controller, Transform screenTransform)
     {
-        IWindowController window = controller as IWindowController;
+        IWindowBaseInterface window = controller as IWindowBaseInterface;
         if (window != null)
         {
             windowLayer.UnregisterWindowOrPanel(screenId, window);
@@ -289,7 +289,7 @@ public class UIFrame : SingletonMonoBehaviour<UIFrame>
             return;
         }
 
-        IPanelController panel = controller as IPanelController;
+        IPanelBaseInterface panel = controller as IPanelBaseInterface;
         if (panel != null)
         {
             panelLayer.UnregisterWindowOrPanel(screenId, panel);

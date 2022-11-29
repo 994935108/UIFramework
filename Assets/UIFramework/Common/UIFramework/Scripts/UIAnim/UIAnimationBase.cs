@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class UIAnimationBase : MonoBehaviour, UIAnimationInterface
 {
-    public void InTransition(Action finish)
+    public void ShowTransitionAnim(Action finish)
     {
         VirInTransition(finish);
     }
 
-    public void OutTransition(Action finish)
+    public void HideTransitionAnim(Action finish)
     {
         VirOutTransition(finish);
     }

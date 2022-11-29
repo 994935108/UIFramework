@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where TProps : UIPropertiesInterface
+public class UIWindowAndPanelBasePanel<TProps> : MonoBehaviour, UIWindowAndPanelBaseInterfaces where TProps : UIPropertiesInterface
 {
     public UIType UItype;
     public UILayer UILayer;
@@ -15,7 +15,8 @@ public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where 
     public UILayer uilayer { get { return SetUILayer(); } }
     public UIType uiType { get { return SetUIType(); } }
 
-    public virtual UILayer SetUILayer() {
+    public virtual UILayer SetUILayer()
+    {
         return UILayer;
 
 
@@ -27,15 +28,19 @@ public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where 
 
     }
 
-    public bool IsVisible { get {
+    public bool IsVisible
+    {
+        get
+        {
             return isVisible;
-        }  }
+        }
+    }
 
     public bool HasInAnim
     {
         get
         {
-            return inAnim!=null;
+            return inAnim != null;
         }
     }
 
@@ -43,30 +48,31 @@ public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where 
     {
         get
         {
-            return outAnim!=null;
+            return outAnim != null;
         }
     }
 
-    Action InTransitionFinishCallback;
-    Action OutTransitionFinishCallback;
+    Action showTransitionAnimFinishCallback;
+    Action hideTransitionAnimFinishCallback;
 
     public UIAnimationBase inAnim;
     public UIAnimationBase outAnim;
 
 
-    private  bool isVisible;
+    private bool isVisible;
 
-   protected bool isStopaAnim;
 
-    protected void RecoverAnim() {
+    private void RecoverAnim()
+    {
+        if (inAnim != null)
+        {
 
-        if (inAnim!=null) { 
-        
-        inAnim.Recover();
+            inAnim.Recover();
         }
 
-        if (outAnim!=null) { 
-        outAnim.Recover();
+        if (outAnim != null)
+        {
+            outAnim.Recover();
 
         }
 
@@ -77,10 +83,11 @@ public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where 
         VirInit();
     }
 
-   
 
-    public virtual void  VirInTransitionFinishedEvent() { 
-    
+
+    public virtual void VirInTransitionFinishedEvent()
+    {
+
     }
 
 
@@ -91,42 +98,38 @@ public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where 
 
     public void Hide(bool anim = true)
     {
-        if (outAnim != null&& !isStopaAnim&& anim)
+        RecoverAnim();
+        if (outAnim != null && anim)
         {
-            outAnim.OutTransition(() =>
+            outAnim.HideTransitionAnim(() =>
             {
+                hideTransitionAnimFinishCallback.Invoke();
+                VirOutTransitionFinishedEvent();
+                VirHide();
+                isVisible = false;
+                gameObject.SetActive(false);
 
-                if (!isStopaAnim) {
+                Debug.LogError("Òþ²ØÃæ°å" + this.name);
 
-                    OutTransitionFinishCallback.Invoke();
-                    VirOutTransitionFinishedEvent();
-
-                    VirHide();
-                    isVisible = false;
-                    gameObject.SetActive(false);
-
-                    Debug.LogError("Òþ²ØÃæ°å" + this.name);
-                }
             });
         }
-        else {
-            
-
+        else
+        {
             VirHide();
-
             isVisible = false;
             gameObject.SetActive(false);
-            
         }
-      
+
 
     }
     public void Show(UIPropertiesInterface props = null, bool anim = true)
     {
-            isStopaAnim = false;
-           isVisible = true;
+        RecoverAnim();
 
-           gameObject.SetActive(true);
+
+        isVisible = true;
+
+        gameObject.SetActive(true);
 
 
         if (props != null)
@@ -135,35 +138,36 @@ public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where 
             {
                 SetProperties((TProps)props);
             }
-           
+
         }
-        
+
         VirShow();
-      
+
 
         if (inAnim != null && anim)
         {
-            
 
-            inAnim.InTransition(() =>
+
+            inAnim.ShowTransitionAnim(() =>
             {
 
-                InTransitionFinishCallback.Invoke();
+                showTransitionAnimFinishCallback.Invoke();
                 VirInTransitionFinishedEvent();
             });
         }
-        
+
     }
 
-   
-    public virtual void VirShow() { 
-    
+
+    public virtual void VirShow()
+    {
+
     }
     public virtual void VirHide()
     {
 
     }
-   
+
     protected virtual void SetProperties(TProps props)
     {
 
@@ -173,14 +177,14 @@ public class UIScenePanel<TProps> : MonoBehaviour, UIControllerInterfaces where 
 
     }
 
-    public void InTransitionFinish(Action finish)
+    public void HideTransitionAnimFinish(Action finish)
     {
-        InTransitionFinishCallback = finish;
+        showTransitionAnimFinishCallback = finish;
     }
 
-    public void OutTransitionFinish(Action finish)
+    public void ShowTransitionAnimFinish(Action finish)
     {
-        OutTransitionFinishCallback = finish;
+        hideTransitionAnimFinishCallback = finish;
 
 
     }

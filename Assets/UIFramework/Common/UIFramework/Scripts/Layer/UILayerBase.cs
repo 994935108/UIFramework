@@ -3,46 +3,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class UILayerBase<TScreen> : MonoBehaviour where TScreen : UIControllerInterfaces
+public abstract class UILayerBase<Twp> : MonoBehaviour where Twp : UIWindowAndPanelBaseInterfaces
 {
-    protected Dictionary<string, TScreen> registeredScreens;
+    protected Dictionary<string, Twp> registeredScreens;
     #region  提供给子类重写的方法
 
     internal virtual void Initialize()
     {
-        registeredScreens = new Dictionary<string, TScreen>();
+        registeredScreens = new Dictionary<string, Twp>();
     }
-    /// <summary>
-    /// 显示一个屏幕画面
-    /// </summary>
-    /// <param name="screen"></param>
-    internal abstract void ShowScreen(TScreen screen);
-    /// <summary>
-    /// 显示一个可带参数的面板
-    /// </summary>
-    /// <typeparam name="TProps"></typeparam>
-    /// <param name="screen"></param>
-    /// <param name="properties"></param>
-    internal abstract void ShowScreen<TProps>(TScreen screen, TProps properties) where TProps : UIPropertiesInterface;
+    
+    internal abstract void ShowWindowOrPanel(Twp windowOrPanel);
+  
+    internal abstract void ShowWidowOrPanel<TProps>(Twp screen, TProps properties) where TProps : UIPropertiesInterface;
 
-    /// <summary>
-    /// 隐藏一个面板
-    /// </summary>
-    /// <param name="screen"></param>
+    
 
-    internal abstract void HideScreen(TScreen screen);
+    internal abstract void HideWindowOrPanel(Twp windowOrPanel);
     #endregion
 
 
 
-    #region  提供UIFrame调用的接口
+    #region  提供UIManager调用的接口
 
-    internal void ShowScreenById(string screenId)
+    internal void ShowWindowOrPanelById(string windowOrPanelId)
     {
-        TScreen ctl;
-        if (registeredScreens.TryGetValue(screenId, out ctl))
+        Twp ctl;
+        if (registeredScreens.TryGetValue(windowOrPanelId, out ctl))
         {
-            ShowScreen(ctl);
+            ShowWindowOrPanel(ctl);
         }
         else
         {
@@ -50,71 +39,71 @@ public abstract class UILayerBase<TScreen> : MonoBehaviour where TScreen : UICon
             //如果没有包含，创建一个
 
 
-            MyDebugTool.LogError("[AUILayerController] Screen ID " + screenId + " not registered to this layer!");
+            MyDebugTool.LogError(" Screen ID " + windowOrPanelId + " not registered to this layer!");
         }
     }
 
-    internal void ShowWindowOrPanelById<T>(string screenId, UIPropertiesInterface properties)
+    internal void ShowWindowOrPanelById<T>(string windowOrPanelId, UIPropertiesInterface properties)
     {
-        TScreen ctl;
-        if (registeredScreens.TryGetValue(screenId, out ctl))
+        Twp ctl;
+        if (registeredScreens.TryGetValue(windowOrPanelId, out ctl))
         {
-            ShowScreen(ctl, properties);
+            ShowWidowOrPanel(ctl, properties);
         }
         else
         {
-            MyDebugTool.LogError("[AUILayerController] Screen ID " + screenId + " not registered!");
+            MyDebugTool.LogError("WindowOrPanel  " + windowOrPanelId + " not registered!");
         }
     }
 
-    internal void HideWindowOrPanelById(string screenId)
+    internal void HideWindowOrPanelById(string windowOrPanelId)
     {
-        TScreen ctl;
-        if (registeredScreens.TryGetValue(screenId, out ctl))
+        Twp ctl;
+        if (registeredScreens.TryGetValue(windowOrPanelId, out ctl))
         {
 
-            HideScreen(ctl);
+            HideWindowOrPanel(ctl);
 
         }
         else
         {
-            MyDebugTool.LogError("[AUILayerController] Could not hide Screen ID " + screenId + " as it is not registered to this layer!");
+            MyDebugTool.LogError(" Could not hide windowOrPanelId " + windowOrPanelId + " as it is not registered to this layer!");
         }
     }
 
-    internal bool WindowOrPanelAlreadyRegistered(string screenId)
+    internal bool WindowOrPanelAlreadyRegistered(string windowOrPanelId)
     {
-        return registeredScreens.ContainsKey(screenId);
+        return registeredScreens.ContainsKey(windowOrPanelId);
     }
 
-    internal void RegisterWindowOrPanel(string screenId, TScreen controller)
+    internal void RegisterWindowOrPanel(string windowOrPanelId, Twp controller)
     {
-        if (!registeredScreens.ContainsKey(screenId))
+        if (!registeredScreens.ContainsKey(windowOrPanelId))
         {
-            MyDebugTool.Log("RegisterScreen:" + screenId);
-            ProcessScreenRegister(screenId, controller);
+            MyDebugTool.Log("RegisterScreen:" + windowOrPanelId);
+            ProcessScreenRegister(windowOrPanelId, controller);
         }
         else
         {
-            MyDebugTool.LogError("[AUILayerController] Screen controller already registered for id: " + screenId);
+            MyDebugTool.LogError("controller already registered for id: " + windowOrPanelId);
         }
     }
-    internal void UnregisterWindowOrPanel(string screenId, TScreen controller)
+    internal void UnregisterWindowOrPanel(string windowOrPanelId, Twp controller)
     {
-        if (registeredScreens.ContainsKey(screenId))
+        if (registeredScreens.ContainsKey(windowOrPanelId))
         {
-            ProcessScreenUnregister(screenId, controller);
+            ProcessScreenUnregister(windowOrPanelId, controller);
         }
         else
         {
-            MyDebugTool.LogError("[AUILayerController] Screen controller not registered for id: " + screenId);
+            MyDebugTool.LogError("[AUILayerController] Screen controller not registered for id: " + windowOrPanelId);
         }
     }
 
-    internal TScreen GetWindowOrPanelByScreenId(string screenId)
+    internal Twp GetWindowOrPanelByScreenId(string windowOrPanelId)
     {
-        TScreen ctl;
-        if (registeredScreens.TryGetValue(screenId, out ctl))
+        Twp ctl;
+        if (registeredScreens.TryGetValue(windowOrPanelId, out ctl))
         {
 
             return ctl;
@@ -122,10 +111,10 @@ public abstract class UILayerBase<TScreen> : MonoBehaviour where TScreen : UICon
         }
         else
         {
-            MyDebugTool.LogError("[AUILayerController] Could not hide Screen ID " + screenId + " as it is not registered to this layer!");
+            MyDebugTool.LogError(" Could not hide Screen ID " + windowOrPanelId + " as it is not registered to this layer!");
         }
 
-        return default(TScreen);
+        return default(Twp);
     }
 
 
@@ -137,7 +126,7 @@ public abstract class UILayerBase<TScreen> : MonoBehaviour where TScreen : UICon
 
     #region  虚方法
 
-    internal virtual void SetScreenParent(UIControllerInterfaces controller, Transform screenTransform)
+    internal virtual void SetScreenParent(UIWindowAndPanelBaseInterfaces controller, Transform screenTransform)
     {
 
 
@@ -150,14 +139,14 @@ public abstract class UILayerBase<TScreen> : MonoBehaviour where TScreen : UICon
         }
     }
 
-    protected virtual void ProcessScreenRegister(string screenId, TScreen controller)
+    protected virtual void ProcessScreenRegister(string screenId, Twp controller)
     {
         controller.ScreenId = screenId;
         registeredScreens.Add(screenId, controller);
        
     }
 
-    protected virtual void ProcessScreenUnregister(string screenId, TScreen controller)
+    protected virtual void ProcessScreenUnregister(string screenId, Twp controller)
     {
         registeredScreens.Remove(screenId);
     }
